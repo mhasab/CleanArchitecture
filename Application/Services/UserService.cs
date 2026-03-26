@@ -1,4 +1,5 @@
 ﻿using Application.DTOs;
+using Domain.Entities;
 using Domain.Interfaces;
 
 namespace Application.Services
@@ -12,54 +13,46 @@ namespace Application.Services
         }
         public async Task<List<UserDto>> GetAllUsersAsync()
         {
-           var users = await _userRepository.GetAllUsersAsync();
-            var userDtos = new List<UserDto>();
-            return userDtos = users.Select(user => new UserDto
-            {
-                Name = user.FirstName + " " + user.LastName,
-                Email = user.Email,
-                Age = user.Age
-            }).ToList();
-        }
+            var users = await _userRepository.GetAllUsersAsync();
 
-        public async Task<UserDto> GetUserByEmailAsync(string email)
-        {
-            var users = await _userRepository.GetAllUsersAsync(); // Get all users synchronously
-            var user = users.FirstOrDefault(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
-            var userDto = new UserDto
-            {
-                Name = user.FirstName + " " + user.LastName,
-                Email = user.Email,
-                Age = user.Age
-            };
-            return userDto;
+            return users.Select(MapToDto).ToList();
         }
 
         public async Task<UserDto> GetUserByIdAsync(int userId)
         {
-            var users = await _userRepository.GetAllUsersAsync(); // Get all users synchronously
-            var user = users.FirstOrDefault(u => u.Id == userId);
-            var userDto = new UserDto
+            var user = await _userRepository.GetByIdAsync(userId);
+
+            if (user == null)
+                return null;
+
+            return MapToDto(user);
+        }
+
+        public async Task<UserDto> GetUserByEmailAsync(string email)
+        {
+            var user = await _userRepository.GetByEmailAsync(email);
+
+            if (user == null)
+                return null;
+
+            return MapToDto(user);
+        }
+
+        public async Task<List<UserDto>> GetUsersByAgeRangeAsync(int minAge, int maxAge)
+        {
+            var users = await _userRepository.GetByAgeRangeAsync(minAge, maxAge);
+
+            return users.Select(MapToDto).ToList();
+        }
+
+        private static UserDto MapToDto(User user)
+        {
+            return new UserDto
             {
                 Name = user.FirstName + " " + user.LastName,
                 Email = user.Email,
                 Age = user.Age
             };
-            return userDto;
-
         }
-
-        public async Task<List<UserDto>> GetUsersByAgeRangeAsync(int minAge, int maxAge)
-        {
-            var users = await _userRepository.GetAllUsersAsync(); // Get all users synchronously
-            var filteredUsers = users.Where(u => u.Age >= minAge && u.Age <= maxAge).ToList();
-            return filteredUsers.Select(user => new UserDto
-            {
-                Name = user.FirstName + " " + user.LastName,
-                Email = user.Email,
-                Age = user.Age
-            }).ToList();
-        }
-
     }
 }

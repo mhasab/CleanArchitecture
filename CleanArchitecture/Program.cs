@@ -1,6 +1,5 @@
-using Application.Services;
-using Domain.Interfaces;
-using Infrastructure.Repositories;
+using Application;
+using Infrastructure;
 
 namespace CleanArchitecture
 {
@@ -20,8 +19,7 @@ namespace CleanArchitecture
             builder.Services.AddSwaggerGen();
 
             // Dependency Injection
-            builder.Services.AddScoped<IUserRepository, UserRepository>();
-            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddApplication().AddInfrastructure();
 
             var app = builder.Build();
 
@@ -34,9 +32,14 @@ namespace CleanArchitecture
                 app.UseSwaggerUI();
             }
 
+            app.MapGet("/", context =>
+            {
+                context.Response.Redirect("/swagger");
+                return Task.CompletedTask;
+            });
+
             app.UseHttpsRedirection();
             app.UseAuthorization();
-
             app.MapControllers();
 
             app.Run();

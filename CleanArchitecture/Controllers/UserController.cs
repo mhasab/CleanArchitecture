@@ -1,4 +1,7 @@
-﻿using Application.Services;
+﻿using Application.Features.Users.Commands;
+using Application.Features.Users.Queries;
+using Application.Services;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArchitecture.Controllers
@@ -8,9 +11,11 @@ namespace CleanArchitecture.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly IMediator _mediator;
+        public UserController(IUserService userService, IMediator mediator)
         {
             _userService = userService;
+            _mediator = mediator;
         }
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -22,11 +27,14 @@ namespace CleanArchitecture.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var user = await _userService.GetUserByIdAsync(id);
-            if (user == null)
+            var result = await _mediator.Send(new GetUserById(id));
+
+            if (result == null)
                 return NotFound();
-            return Ok(user);
+
+            return Ok(result);
         }
+
         [HttpGet("email/{email}")]
         public async Task<IActionResult> GetByEmail(string email)
         {
@@ -40,6 +48,15 @@ namespace CleanArchitecture.Controllers
         {
             var users = await _userService.GetUsersByAgeRangeAsync(minAge, maxAge);
             return Ok(users);
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> Create(CreateUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (result == null)
+                return BadRequest("Failed to create user.");
+            return Ok(result);
         }
     }
 }

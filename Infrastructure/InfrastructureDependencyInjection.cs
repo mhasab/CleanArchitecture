@@ -1,0 +1,15 @@
+﻿using Domain.Interfaces;
+using Infrastructure.Repositories;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Infrastructure
+{
+    public static class InfrastructureDependencyInjection
+    {
+        public static IServiceCollection AddInfrastructure(this IServiceCollection services)
+        {
+            services.AddScoped<IUserRepository, UserRepository>();
+            return services;
+        }
+    }
+}

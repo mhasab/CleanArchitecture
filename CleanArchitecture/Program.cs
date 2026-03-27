@@ -19,7 +19,7 @@ namespace CleanArchitecture
             builder.Services.AddSwaggerGen();
 
             // Dependency Injection
-            builder.Services.AddApplication().AddInfrastructure();
+            builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
 
             var app = builder.Build();
 

@@ -26,7 +26,7 @@ namespace CleanArchitecture
             // =========================
             // Middleware
             // =========================
-            if (app.Environment.IsDevelopment() || app.Environment.IsStaging())
+            if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();

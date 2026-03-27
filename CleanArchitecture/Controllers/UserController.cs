@@ -20,7 +20,9 @@ namespace CleanArchitecture.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var users = await _userService.GetAllUsersAsync();
+            //var users = await _userService.GetAllUsersAsync();
+            //return Ok(users);
+            var users = await _mediator.Send(new GetAllUsers());
             return Ok(users);
         }
 

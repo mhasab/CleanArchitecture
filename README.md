@@ -1,116 +1,107 @@
-# Clean Architecture (.NET) - In Progress 🚧
+# 🚀 Clean Architecture .NET API — Production-Oriented Backend
 
-This project is a **learning-driven implementation of Clean Architecture** using ASP.NET Core.
+A **production-oriented backend project** built with ASP.NET Core following **Clean Architecture principles**, designed for scalability, maintainability, and real-world enterprise use cases.
 
-The goal is to gradually build a scalable backend by applying modern design patterns step by step.
-
----
-
-## 🚀 Current Progress
-
-So far, the project includes:
-
-* ✅ Clean Architecture structure
-* ✅ CQRS (Command Query Responsibility Segregation)
-* ✅ MediatR (for handling requests & decoupling)
-* ✅ AutoMapper (for mapping between models & DTOs)
-* ✅ Static Data Source (no database yet)
-
-> ⚠️ Note: The project is still under development and will be expanded over time.
+> 💡 This project demonstrates how to structure a modern backend using CQRS, Repository Pattern, and layered architecture.
 
 ---
 
-## 🏗️ Architecture Overview
+## 🧩 Key Features
 
-The solution is organized into layers following Clean Architecture principles:
-
-### 🔹 Domain Layer
-
-* Core entities
-* Business rules (basic)
-
----
-
-### 🔹 Application Layer
-
-* CQRS (Commands & Queries)
-* MediatR handlers
-* DTOs
-* AutoMapper profiles
+* 🏗️ Clean Architecture (Domain, Application, Infrastructure, API)
+* ⚡ CQRS with MediatR
+* 🔄 Generic Repository Pattern
+* 🧱 Unit of Work Pattern
+* 🗄️ Entity Framework Core (DbContext)
+* 🔁 AutoMapper (Entity ↔ DTO mapping)
+* 🌐 RESTful API Design
+* 📄 Swagger (API documentation)
+* 🔐 CORS Configuration
+* 🚀 Live Deployment
 
 ---
 
-### 🔹 API Layer
+## 🏛️ Architecture Design
 
-* Controllers
-* Request handling via MediatR
+This project strictly follows **Separation of Concerns**:
+
+* **Domain Layer** → Core business logic & interfaces
+* **Application Layer** → Use cases (CQRS, Handlers, DTOs)
+* **Infrastructure Layer** → Database access (EF Core, Repositories)
+* **API Layer** → Controllers, Middleware, Configuration
 
 ---
 
-## 🧠 Implemented Concepts
+## 🔄 Request Lifecycle
 
-### 1. CQRS + MediatR
-
-Example Query:
-
-```csharp id="c1a9x2"
-public record GetUserById(int Id) : IRequest<UserDto>;
-```
-
-Handler:
-
-```csharp id="v4p8lm"
-public class GetUserByIdHandler : IRequestHandler<GetUserById, UserDto>
-{
-    public async Task<UserDto> Handle(GetUserById request, CancellationToken cancellationToken)
-    {
-        // Currently uses static data
-    }
-}
+```text
+Client → Controller → MediatR → Handler → UnitOfWork → Repository → DbContext → Database
 ```
 
 ---
 
-### 2. AutoMapper
+## 🧠 Technical Highlights
 
-Used to map between models and DTOs:
+### ✔ CQRS + MediatR
 
-```csharp id="m92kfd"
-CreateMap<User, UserDto>();
-```
+* Clear separation between **Read (Queries)** and **Write (Commands)**
+* Loose coupling between layers
+
+---
+
+### ✔ Repository + Unit of Work
+
+* Centralized data access
+* Transaction-friendly structure
+* Easily extendable
+
+---
+
+### ✔ EF Core Integration
+
+* DbContext-based data handling
+* Async operations for performance
+
+---
+
+### ✔ AutoMapper
+
+* Clean separation between domain models and DTOs
+
+---
+
+### ✔ API Deployment
+
+* Fully deployed and accessible online
+* Swagger enabled for live testing
+
+---
+
+## 🌐 Live Demo
+
+🔗 API Base URL:
+http://cleanarchitecture.tryasp.net
+
+🔗 Swagger UI:
+http://cleanarchitecture.tryasp.net/swagger
 
 ---
 
 ## 📂 Project Structure
 
-```bash id="y3f9lw"
+```text
 src/
  ├── Domain/
- │    ├── Entities/
- │    └── Interfaces/
- │
  ├── Application/
- │    ├── Features/
- │    │    └── Users/
- │    │         ├── Commands/
- │    │         ├── Queries/
- │    │         ├── Handlers/
- │    │         └── Mapping/
- │    └── DTOs/
- │
  ├── Infrastructure/
- │    └── Repositories/
- │
  └── API/
-      ├── Controllers/
-      └── Program.cs
 ```
 
 ---
 
-## ⚙️ Running the Project
+## ⚙️ Run Locally
 
-```bash id="k3p9zx"
+```bash
 git clone https://github.com/mhasab/CleanArchitecture.git
 cd CleanArchitecture
 dotnet run --project src/API
@@ -118,46 +109,54 @@ dotnet run --project src/API
 
 ---
 
-## 🔄 Current Flow
+## 🧪 Example Endpoints
 
-1. API receives request
-2. Controller sends request via MediatR
-3. Handler processes request
-4. Static data is returned
-5. AutoMapper maps response → DTO
-
----
-
-## 🧪 Next Steps (Planned)
-
-The project will be extended to include:
-
-* ⏳ Database integration (EF Core)
-* ⏳ Repository Pattern
-* ⏳ Validation Pipeline
-* ⏳ FluentValidation
-* ⏳ Authentication & Authorization (JWT)
-* ⏳ Exception Handling Middleware
-* ⏳ Logging
+```http
+GET /api/users
+GET /api/users/{id}
+POST /api/user/create
+```
 
 ---
 
-## 🎯 Purpose
+## 🔐 Security (In Progress)
 
-This project is meant to:
-
-* Practice Clean Architecture in a real scenario
-* Understand CQRS & MediatR deeply
-* Build a reusable backend structure
+* JWT Authentication (planned)
+* Role-Based Authorization (planned)
 
 ---
 
-## 🤝 Contributing
+## 📈 Future Improvements
 
-Feel free to fork or follow along as the project evolves.
+* 🔐 JWT Authentication & Refresh Tokens
+* ✅ FluentValidation (Validation Pipeline)
+* ⚠️ Global Exception Handling Middleware
+* 📊 Logging (Serilog)
+* 📄 Pagination & Filtering
+* ⚡ Caching (Redis)
+
+---
+
+## 🎯 Why This Project?
+
+This project reflects:
+
+* Strong understanding of **Clean Architecture**
+* Practical implementation of **CQRS & MediatR**
+* Ability to build **scalable backend systems**
+* Writing **maintainable and testable code**
+
+---
+
+## 👨‍💻 Author
+
+**Mohamed Shaban**
+
+* Backend Developer (.NET)
+* Focused on scalable architectures & real-world systems
 
 ---
 
 ## ⭐ Support
 
-If you find this helpful, consider giving it a ⭐
+If you like this project, give it a ⭐ on GitHub — it helps a lot!

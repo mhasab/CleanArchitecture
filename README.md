@@ -17,6 +17,7 @@ A **production-oriented backend project** built with ASP.NET Core following **Cl
 * 🌐 RESTful API Design
 * 📄 Swagger (API documentation)
 * 🔐 CORS Configuration
+* 🔒 Authentication & Authorization (JWT, Roles, Policies)
 * 🚀 Live Deployment
 
 ---
@@ -70,20 +71,35 @@ Client → Controller → MediatR → Handler → UnitOfWork → Repository → 
 
 ---
 
-### ✔ API Deployment
+## 🔐 Authorization & Authentication (Advanced)
 
-* Fully deployed and accessible online
-* Swagger enabled for live testing
+* 🔑 JWT Authentication (Access Token & Refresh Token)
+* 👤 Role-Based Authorization (Admin / User / etc.)
+* 🛡️ Policy-Based Authorization (Fine-grained access control)
+* 🔒 Secure Endpoints using `[Authorize]` attributes
+* 🔄 Token Validation & Expiration Handling
+* 🚫 Protected Routes & Restricted Access
+* 🧩 Scalable Identity Integration (ASP.NET Core Identity ready)
+
+---
+
+## 🧠 Security Highlights
+
+### ✔ JWT Authentication
+
+* Stateless and scalable authentication mechanism
+* Secure API access using bearer tokens
+* Supports refresh tokens for extended sessions
 
 ---
 
 ## 🌐 Live Demo
 
-🔗 API Base URL:
-http://cleanarchitecture.tryasp.net
+🔗 API Base URL:  
+http://cleanarchitecture.tryasp.net  
 
-🔗 Swagger UI:
-http://cleanarchitecture.tryasp.net/swagger
+🔗 Swagger UI:  
+http://cleanarchitecture.tryasp.net/swagger  
 
 ---
 
@@ -121,14 +137,14 @@ POST /api/user/create
 
 ## 🔐 Security (In Progress)
 
-* JWT Authentication (planned)
-* Role-Based Authorization (planned)
+* Role-Based Authorization (implemented / improving)
+* Refresh Tokens (planned)
 
 ---
 
 ## 📈 Future Improvements
 
-* 🔐 JWT Authentication & Refresh Tokens
+* 🔐 Advanced JWT & Refresh Token Strategy
 * ✅ FluentValidation (Validation Pipeline)
 * ⚠️ Global Exception Handling Middleware
 * 📊 Logging (Serilog)
@@ -143,6 +159,7 @@ This project reflects:
 
 * Strong understanding of **Clean Architecture**
 * Practical implementation of **CQRS & MediatR**
+* Secure API design with **Authentication & Authorization**
 * Ability to build **scalable backend systems**
 * Writing **maintainable and testable code**
 

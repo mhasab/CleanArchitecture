@@ -49,6 +49,7 @@
             Age = age;
             Email = email;
         }
+        public string Password { get; set; }
 
     }
 }

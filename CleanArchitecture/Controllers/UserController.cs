@@ -2,6 +2,7 @@
 using Application.Features.Users.Queries;
 using Application.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CleanArchitecture.Controllers
@@ -17,6 +18,7 @@ namespace CleanArchitecture.Controllers
             _userService = userService;
             _mediator = mediator;
         }
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Get()
         {

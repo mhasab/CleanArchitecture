@@ -15,42 +15,60 @@ namespace CleanArchitecture
             // =========================
             // Services
             // =========================
+
             builder.Services.AddControllers();
+
+            // HttpContextAccessor
+            builder.Services.AddHttpContextAccessor();
 
             // Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
             // Dependency Injection
-            builder.Services.AddApplication().AddInfrastructure(builder.Configuration);
+            builder.Services
+                .AddApplication()
+                .AddInfrastructure(builder.Configuration);
+
+            // Authentication
             builder.Services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(options =>
-             {
-                 options.TokenValidationParameters = new TokenValidationParameters
-                 {
-                     ValidateIssuer = true,
-                     ValidateAudience = true,
-                     ValidateLifetime = true,
-                     ValidateIssuerSigningKey = true,
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
 
-                     ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                     ValidAudience = builder.Configuration["Jwt:Audience"],
-                     IssuerSigningKey = new SymmetricSecurityKey(
-                         Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
-                     )
-                 };
-             });
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Audience"],
+
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+                };
+            });
+
+            // Authorization Policies
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy =>
+                    policy.RequireRole("Admin"));
+            });
 
             var app = builder.Build();
 
             // =========================
             // Middleware
             // =========================
-            if (app.Environment.IsDevelopment() || app.Environment.IsStaging() || app.Environment.IsProduction())
+
+            if (app.Environment.IsDevelopment() ||
+                app.Environment.IsStaging() ||
+                app.Environment.IsProduction())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
@@ -63,8 +81,10 @@ namespace CleanArchitecture
             });
 
             app.UseHttpsRedirection();
+
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.MapControllers();
 
             app.Run();

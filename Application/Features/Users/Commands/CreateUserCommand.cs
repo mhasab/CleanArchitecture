@@ -1,7 +1,8 @@
-﻿using Application.DTOs;
+﻿using Application.Comman;
+using Application.DTOs;
 using MediatR;
 
 namespace Application.Features.Users.Commands
 {
-    public record CreateUserCommand(string Name, int Age, string Email) : IRequest<UserDto>;
+    public record CreateUserCommand(string Name, int Age, string Email) : IRequest<ApiResponse<UserDto>>;
 }

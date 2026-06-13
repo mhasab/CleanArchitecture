@@ -8,15 +8,14 @@ namespace Infrastructure.Repositories
     {
         private readonly AppDbContext _context;
 
-        public IGenericRepository<User> UserRepository { get; }
+        public IUserRepositoryV2 UserRepository { get; }
         public IGenericRepository<LeaveRequest> LeaveRequests { get; }
         public IGenericRepository<LeaveType> LeaveTypes { get; }
-
 
         public UnitOfWork(AppDbContext context)
         {
             _context = context;
-            UserRepository = new GenericRepository<User>(context);
+            UserRepository = new UserRepositoryV2(context);
             LeaveRequests = new GenericRepository<LeaveRequest>(context);
             LeaveTypes = new GenericRepository<LeaveType>(context);
         }

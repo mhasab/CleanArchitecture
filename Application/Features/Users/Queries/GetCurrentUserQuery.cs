@@ -4,6 +4,6 @@ using MediatR;
 
 namespace Application.Features.Users.Queries
 {
-    public record GetAllUsers()
-        : IRequest<ApiResponse<List<UserDto>>>;
+    public record GetCurrentUserQuery()
+    : IRequest<ApiResponse<UserDto>>;
 }

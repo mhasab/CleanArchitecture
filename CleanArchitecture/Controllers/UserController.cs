@@ -4,6 +4,8 @@ using Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
 
 namespace CleanArchitecture.Controllers
 {
@@ -18,17 +20,21 @@ namespace CleanArchitecture.Controllers
             _userService = userService;
             _mediator = mediator;
         }
-        [Authorize]
+
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> Get()
         {
-            //var users = await _userService.GetAllUsersAsync();
-            //return Ok(users);
-            var users = await _mediator.Send(new GetAllUsers());
-            return Ok(users);
+            var result = await _mediator.Send(new GetAllUsers());
+
+            if (!result.Success)
+                return StatusCode(StatusCodes.Status403Forbidden, result);
+
+            return Ok(result);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _mediator.Send(new GetUserById(id));
@@ -39,15 +45,20 @@ namespace CleanArchitecture.Controllers
             return Ok(result);
         }
 
-        [HttpGet("email/{email}")]
-        public async Task<IActionResult> GetByEmail(string email)
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> Me()
         {
-            var user = await _userService.GetUserByEmailAsync(email);
-            if (user == null)
-                return NotFound();
-            return Ok(user);
+            var result = await _mediator.Send(new GetCurrentUserQuery());
+
+            if (!result.Success)
+                return NotFound(result);
+
+            return Ok(result);
         }
+
         [HttpGet("age-range")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> GetByAgeRange(int minAge, int maxAge)
         {
             var users = await _userService.GetUsersByAgeRangeAsync(minAge, maxAge);
@@ -55,11 +66,19 @@ namespace CleanArchitecture.Controllers
         }
 
         [HttpPost("create")]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Create(CreateUserCommand command)
         {
             var result = await _mediator.Send(command);
-            if (result == null)
-                return BadRequest("Failed to create user.");
+
+            if (!result.Success)
+            {
+                if (result.Message == "User already exists.")
+                    return Conflict(result); // 409
+
+                return BadRequest(result); // 400
+            }
+
             return Ok(result);
         }
     }

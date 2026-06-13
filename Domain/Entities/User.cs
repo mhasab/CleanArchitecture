@@ -41,6 +41,8 @@
             }
         }
 
+        public string Password { get; set; }
+        public string Role { get; set; } = "User";
         public User(int id, string firstName, string lastName, int age, string email)
         {
             Id = id;
@@ -49,7 +51,6 @@
             Age = age;
             Email = email;
         }
-        public string Password { get; set; }
 
     }
 }

@@ -4,10 +4,11 @@ using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
 using AutoMapper;
+using Application.Comman;
 
 namespace Application.Features.Users.Handlers
 {
-    public class CreateUserHandler : IRequestHandler<CreateUserCommand, UserDto>
+    public class CreateUserHandler : IRequestHandler<CreateUserCommand, ApiResponse<UserDto>>
     {
         //private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
@@ -19,24 +20,66 @@ namespace Application.Features.Users.Handlers
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<UserDto> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+        public async Task<ApiResponse<UserDto>> Handle(
+     CreateUserCommand request,
+     CancellationToken cancellationToken)
         {
-            //var users = await _unitOfWork.UserRepository.GetAllAsync();
-            //var newId = users != null && users.Count() > 0 ? users.Max(u => u.Id) : 0;
-
-            var user = _mapper.Map<User>(request);
-            //user.Id = newId + 1;
-
-            await _unitOfWork.UserRepository.AddAsync(user);
-
-            await _unitOfWork.SaveChangesAsync();
-            var createdUser = await _unitOfWork.UserRepository.GetByIdAsync(user.Id);
-            if (createdUser != null)
+            try
             {
-                return _mapper.Map<UserDto>(createdUser);
-            }
+                var existingUser =
+                    await _unitOfWork.UserRepository.GetByEmailAsync(request.Email);
 
-            return null;
+                if (existingUser != null)
+                {
+                    return new ApiResponse<UserDto>
+                    {
+                        Success = false,
+                        Message = "User already exists.",
+                        Errors = new List<string>
+                {
+                    $"Email '{request.Email}' is already registered."
+                }
+                    };
+                }
+
+                var user = _mapper.Map<User>(request);
+
+                await _unitOfWork.UserRepository.AddAsync(user);
+
+                var affectedRows = await _unitOfWork.SaveChangesAsync();
+
+                if (affectedRows <= 0)
+                {
+                    return new ApiResponse<UserDto>
+                    {
+                        Success = false,
+                        Message = "Failed to create user.",
+                        Errors = new List<string>
+                {
+                    "No records were saved to the database."
+                }
+                    };
+                }
+
+                return new ApiResponse<UserDto>
+                {
+                    Success = true,
+                    Message = "User created successfully.",
+                    Data = _mapper.Map<UserDto>(user)
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse<UserDto>
+                {
+                    Success = false,
+                    Message = "Unexpected error occurred.",
+                    Errors = new List<string>
+            {
+                ex.Message
+            }
+                };
+            }
         }
     }
 }

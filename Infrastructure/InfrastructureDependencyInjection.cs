@@ -24,9 +24,12 @@ namespace Infrastructure
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            
+
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-            
+
+            services.AddHttpContextAccessor();
+
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
 
             return services;
         }

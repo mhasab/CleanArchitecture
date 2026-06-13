@@ -24,7 +24,9 @@ namespace Application.Features.Users.Mapping
                          ? string.Empty
                          : src.Name.Split(' ', 2)[1]))
                  .ForCtorParam("age", opt => opt.MapFrom(src => src.Age))
-                 .ForCtorParam("email", opt => opt.MapFrom(src => src.Email));
+                 .ForCtorParam("email", opt => opt.MapFrom(src => src.Email))
+.ForMember(dest => dest.Password,
+    opt => opt.MapFrom(src => "NTG"));
         }
     }
 }

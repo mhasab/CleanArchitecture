@@ -4,6 +4,7 @@ using Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Security.Claims;
 
 
@@ -11,6 +12,7 @@ namespace CleanArchitecture.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableRateLimiting("UserApiPolicy")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

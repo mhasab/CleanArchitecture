@@ -1,6 +1,7 @@
 using Application;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -20,6 +21,22 @@ namespace CleanArchitecture
 
             // HttpContextAccessor
             builder.Services.AddHttpContextAccessor();
+
+            // Add Limiting
+            builder.Services.AddRateLimiter(options =>
+            {
+                options.AddFixedWindowLimiter("UserApiPolicy", opt =>
+                {
+                    opt.PermitLimit = 5;
+                    opt.Window = TimeSpan.FromMinutes(1);
+                });
+
+                options.AddFixedWindowLimiter("DefaultPolicy", opt =>
+                {
+                    opt.PermitLimit = 100;
+                    opt.Window = TimeSpan.FromMinutes(1);
+                });
+            });
 
             // Swagger
             builder.Services.AddEndpointsApiExplorer();
@@ -79,6 +96,8 @@ namespace CleanArchitecture
                 context.Response.Redirect("/swagger");
                 return Task.CompletedTask;
             });
+            
+            app.UseRateLimiter();
 
             app.UseHttpsRedirection();
 
